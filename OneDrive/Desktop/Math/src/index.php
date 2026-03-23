@@ -3812,6 +3812,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $studentId) {
         const questionText = document.getElementById('question-text');
         const optionsContainer = document.getElementById('options-container');
 
+        // ===================== VISUAL SYNC FROM SAVED DATA =====================
+        if (savedGameData !== null) {
+            // 1. Update score display
+            if (scoreDisplay) scoreDisplay.innerText = gameState.score;
+
+            // 2. Update hero icon on the map button
+            const btnIcon = document.getElementById('btn-hero-icon');
+            if (btnIcon) btnIcon.src = gameState.selectedHero;
+
+            // 3. Unlock and badge map nodes based on completedRanks
+            for (let i = 0; i < 12; i++) {
+                const prevRank = i > 0 ? gameState.completedRanks[i - 1] : null;
+                const isUnlocked = i === 0 || prevRank === 'A' || prevRank === 'P';
+                const node = document.getElementById('mnode-' + i);
+                if (!node) continue;
+
+                if (isUnlocked) {
+                    node.classList.remove('locked');
+                    const lockIcon = node.querySelector('.adv-nlock');
+                    if (lockIcon) lockIcon.style.display = 'none';
+                    const numLabel = node.querySelector('.adv-nn');
+                    if (numLabel) numLabel.style.display = 'block';
+                }
+
+                // Add rank badge if level completed
+                const rank = gameState.completedRanks[i];
+                if (rank) {
+                    node.classList.add('completed');
+                    const old = node.querySelector('.adv-rank-badge');
+                    if (old) old.remove();
+                    const badge = document.createElement('div');
+                    badge.className = `adv-rank-badge rank-${rank.toLowerCase()}`;
+                    badge.textContent = rank;
+                    node.appendChild(badge);
+                }
+            }
+
+            // 4. Show Final Scorecard button if level 11 (4.3) is done
+            const scorecardBtn = document.getElementById('btn-final-scorecard');
+            if (scorecardBtn && gameState.completedRanks[11]) {
+                scorecardBtn.style.display = 'block';
+            }
+
+            console.log('UI synced from saved game data.');
+        }
+
         // ===================== NAVIGATION =====================
         function switchScreen(screen) {
             document.querySelectorAll('.screen').forEach(s => {
