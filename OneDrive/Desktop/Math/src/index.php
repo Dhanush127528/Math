@@ -25,29 +25,36 @@ if ($studentId) {
         if (isset($result['Item']['GameData']['S'])) {
             $gameData = $result['Item']['GameData']['S'];
         }
-    } catch (Exception $e) {
+    }
+    catch (Exception $e) {
         // Handle error quietly or log it
         error_log("DynamoDB GetItem Error: " . $e->getMessage());
     }
 }
 
 // 4. Handle POST requests to Save Progress
+// 4. Handle POST requests to Save Progress
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $studentId) {
+
+    // Add this header so the browser knows it's receiving JSON
+    header('Content-Type: application/json');
+
     $inputData = file_get_contents('php://input');
     $decodedData = json_decode($inputData, true);
-    
+
     if (isset($decodedData['action']) && $decodedData['action'] === 'save_progress') {
         try {
             $client->putItem([
                 'TableName' => 'vibe_coding_dev',
                 'Item' => [
                     'StudentID' => ['S' => $partitionKey],
-                    'GameData'  => ['S' => json_encode($decodedData['gameData'])]
+                    'GameData' => ['S' => json_encode($decodedData['gameData'])]
                 ]
             ]);
             echo json_encode(["status" => "success"]);
             exit;
-        } catch (Exception $e) {
+        }
+        catch (Exception $e) {
             echo json_encode(["status" => "error", "message" => $e->getMessage()]);
             exit;
         }
