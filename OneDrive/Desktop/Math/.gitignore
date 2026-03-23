@@ -1,0 +1,6 @@
+# Ignore everything outside the Math project
+../
+node_modules/
+.vscode/
+.antigravity/
+*.log
