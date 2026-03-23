@@ -4625,6 +4625,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $studentId) {
                 document.getElementById('restart-btn').style.display = 'inline-block';
             }
 
+            // Save progress to DynamoDB after every level end
+            saveGameProgressToDynamoDB();
+
             switchScreen(resultScreen);
         }
 
@@ -4632,6 +4635,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $studentId) {
             if (accuracy >= 80) return { title: '🌟 Advanced', letter: 'A' };
             if (accuracy >= 60) return { title: '⚔️ Proficient', letter: 'P' };
             return { title: '🛡️ Partial Proficient', letter: 'PP' };
+        }
+
+        // ===================== SAVE TO DYNAMODB =====================
+        function saveGameProgressToDynamoDB() {
+            // Build a JSON snapshot of everything to remember
+            const gameDataToSave = {
+                currentLevelIndex: gameState.currentLevelIndex,
+                score:             gameState.score,
+                completedRanks:    gameState.completedRanks,
+                selectedHero:      gameState.selectedHero,
+                selectedHeroName:  gameState.selectedHeroName
+            };
+
+            // Send the data to the PHP handler at the top of this file
+            fetch('index.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'save_progress',
+                    gameData: gameDataToSave
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    console.log('✅ Progress saved to DynamoDB!');
+                } else {
+                    console.error('❌ Save failed:', data.message);
+                }
+            })
+            .catch(error => console.error('Error saving progress:', error));
         }
 
     </script>
