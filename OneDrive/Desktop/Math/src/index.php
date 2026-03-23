@@ -3752,6 +3752,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $studentId) {
             selectedHeroName: "Super Boy"
         };
 
+        // Parse the saved game data injected by PHP
+        const savedGameDataRaw = '<?php echo $gameData ? addslashes($gameData) : "null"; ?>';
+        let savedGameData = null;
+
+        if (savedGameDataRaw !== "null") {
+            try {
+                savedGameData = JSON.parse(savedGameDataRaw);
+                console.log("Loaded previous save data:", savedGameData);
+
+                // Overwrite game variables with saved data
+                gameState.currentLevelIndex  = savedGameData.currentLevelIndex  || 0;
+                gameState.score              = savedGameData.score              || 0;
+                gameState.completedRanks     = savedGameData.completedRanks     || {};
+                gameState.selectedHero       = savedGameData.selectedHero       || "https://raw.githubusercontent.com/Dhanush127528/images/main/hero1.png";
+                gameState.selectedHeroName   = savedGameData.selectedHeroName   || "Super Boy";
+
+            } catch (e) {
+                console.error("Error parsing saved game data", e);
+            }
+        }
+
         // ===================== DOM REFS =====================
         const startScreen = document.getElementById('start-screen');
         const heroSelectScreen = document.getElementById('hero-select-screen');
