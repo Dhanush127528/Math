@@ -1,3 +1,59 @@
+<?php
+require 'functions.php';
+require 'Aws/config.php';
+
+// 1. Fetch the student ID from cookies
+$studentId = isset($_COOKIE['CurStudentID']) ? $_COOKIE['CurStudentID'] : null;
+
+$gameData = null; // Default empty state
+$partitionKey = null;
+
+if ($studentId) {
+    // 2. Create the partition key (e.g., 50330691_1)
+    $partitionKey = $studentId . '_1';
+
+    // 3. Fetch existing game data from DynamoDB
+    try {
+        // Assuming $client is initialized in Aws/config.php
+        $result = $client->getItem([
+            'TableName' => 'vibe_coding_dev',
+            'Key' => [
+                'StudentID' => ['S' => $partitionKey]
+            ]
+        ]);
+
+        if (isset($result['Item']['GameData']['S'])) {
+            $gameData = $result['Item']['GameData']['S'];
+        }
+    } catch (Exception $e) {
+        // Handle error quietly or log it
+        error_log("DynamoDB GetItem Error: " . $e->getMessage());
+    }
+}
+
+// 4. Handle POST requests to Save Progress
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $studentId) {
+    $inputData = file_get_contents('php://input');
+    $decodedData = json_decode($inputData, true);
+    
+    if (isset($decodedData['action']) && $decodedData['action'] === 'save_progress') {
+        try {
+            $client->putItem([
+                'TableName' => 'vibe_coding_dev',
+                'Item' => [
+                    'StudentID' => ['S' => $partitionKey],
+                    'GameData'  => ['S' => json_encode($decodedData['gameData'])]
+                ]
+            ]);
+            echo json_encode(["status" => "success"]);
+            exit;
+        } catch (Exception $e) {
+            echo json_encode(["status" => "error", "message" => $e->getMessage()]);
+            exit;
+        }
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
