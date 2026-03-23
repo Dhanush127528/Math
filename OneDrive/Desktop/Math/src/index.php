@@ -4097,6 +4097,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $studentId) {
 
         // 3. Confirm Hero goes to Map Screen
         document.getElementById('confirm-hero-btn').addEventListener('click', () => {
+            saveGameProgressToDynamoDB(); // Save when hero is confirmed/changed
             switchScreen(mapScreen);
             updateMap();
             requestAnimationFrame(() => requestAnimationFrame(drawMapPath));
@@ -4119,6 +4120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $studentId) {
             }
             if (gameState.currentLevelIndex < levels.length - 1) {
                 gameState.currentLevelIndex++;
+                saveGameProgressToDynamoDB(); // Save after advancing to next level
                 updateMap();
                 switchScreen(mapScreen);
                 requestAnimationFrame(() => requestAnimationFrame(drawMapPath));
