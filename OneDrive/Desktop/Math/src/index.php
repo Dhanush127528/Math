@@ -3753,12 +3753,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $studentId) {
         };
 
         // Parse the saved game data injected by PHP
-        const savedGameDataRaw = '<?php echo $gameData ? addslashes($gameData) : "null"; ?>';
+        const savedGameDataRaw = <?php echo $gameData ? json_encode($gameData) : 'null'; ?>;
         let savedGameData = null;
 
         if (savedGameDataRaw !== "null") {
             try {
-                savedGameData = JSON.parse(savedGameDataRaw);
+                savedGameData = (typeof savedGameDataRaw === 'string') ? JSON.parse(savedGameDataRaw) : savedGameDataRaw;
                 console.log("Loaded previous save data:", savedGameData);
 
                 // Overwrite game variables with saved data
@@ -4697,7 +4697,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $studentId) {
             };
 
             // Send the data to the PHP handler at the top of this file
-            fetch('index.php', {
+            fetch(window.location.pathname, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
