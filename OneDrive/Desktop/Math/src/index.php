@@ -3761,25 +3761,75 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $studentId) {
             selectedHeroName: "Super Boy"
         };
 
-        // Parse the saved game data injected by PHP
-        const savedGameDataRaw = <?php echo $gameData ? json_encode($gameData) : 'null'; ?>;
-        let savedGameData = null;
+        // Parse the saved game data injected by PHP (No quotes, no parsing needed!)
+        const savedGameData = <?php echo $gameData ? $gameData : 'null'; ?>;
 
-        if (savedGameDataRaw !== null && typeof savedGameDataRaw === 'object') {
-            try {
-                savedGameData = savedGameDataRaw; // Already a JS object from json_encode
-                console.log("Loaded previous save data:", savedGameData);
+        if (savedGameData !== null) {
+            console.log("Loaded previous save data:", savedGameData);
 
-                // Overwrite game variables with saved data
-                gameState.currentLevelIndex  = savedGameData.currentLevelIndex  || 0;
-                gameState.score              = savedGameData.score              || 0;
-                gameState.completedRanks     = savedGameData.completedRanks     || {};
-                gameState.selectedHero       = savedGameData.selectedHero       || "https://raw.githubusercontent.com/Dhanush127528/images/main/hero1.png";
-                gameState.selectedHeroName   = savedGameData.selectedHeroName   || "Super Boy";
+            // Overwrite game variables with saved data
+            gameState.currentLevelIndex  = savedGameData.currentLevelIndex  || 0;
+            gameState.score              = savedGameData.score              || 0;
 
-            } catch (e) {
-                console.error("Error parsing saved game data", e);
+            // Handle completedRanks whether saved as Array or Object
+            gameState.completedRanks     = savedGameData.completedRanks     || {};
+            if (Array.isArray(gameState.completedRanks)) {
+                gameState.completedRanks = Object.assign({}, gameState.completedRanks);
             }
+
+            gameState.selectedHero       = savedGameData.selectedHero       || "https://raw.githubusercontent.com/Dhanush127528/images/main/hero1.png";
+            gameState.selectedHeroName   = savedGameData.selectedHeroName   || "Super Boy";
+
+            // --- Visual Sync ---
+            // 1. Score display
+            const sd = document.getElementById('score-display');
+            if (sd) sd.innerText = gameState.score;
+
+            // 2. Hero icon on map button
+            const btnIcon = document.getElementById('btn-hero-icon');
+            if (btnIcon) btnIcon.src = gameState.selectedHero;
+
+            // 3. Unlock and badge map nodes
+            for (let i = 0; i < 12; i++) {
+                const prevRank = i > 0 ? gameState.completedRanks[i - 1] : null;
+                const isUnlocked = i === 0 || prevRank === 'A' || prevRank === 'P';
+                const node = document.getElementById('mnode-' + i);
+                if (!node) continue;
+
+                if (isUnlocked) {
+                    node.classList.remove('locked');
+                    const lockIcon = node.querySelector('.adv-nlock');
+                    if (lockIcon) lockIcon.style.display = 'none';
+                    const numLabel = node.querySelector('.adv-nn');
+                    if (numLabel) numLabel.style.display = 'block';
+                }
+
+                const rank = gameState.completedRanks[i];
+                if (rank) {
+                    node.classList.add('completed');
+                    const old = node.querySelector('.adv-rank-badge');
+                    if (old) old.remove();
+                    const badge = document.createElement('div');
+                    badge.className = `adv-rank-badge rank-${rank.toLowerCase()}`;
+                    badge.textContent = rank;
+                    node.appendChild(badge);
+                }
+            }
+
+            // 4. Final Scorecard button
+            const scorecardBtn = document.getElementById('btn-final-scorecard');
+            if (scorecardBtn && gameState.completedRanks[11]) {
+                scorecardBtn.style.display = 'block';
+            }
+
+            // 5. Auto-resume to map (skip Start Adventure)
+            switchScreen(mapScreen);
+            updateMap();
+            requestAnimationFrame(() => requestAnimationFrame(drawMapPath));
+
+            // 6. Show Skip button on hero select
+            const skipBtn = document.getElementById('skip-hero-btn');
+            if (skipBtn) skipBtn.style.display = 'inline-block';
         }
 
         // ===================== DOM REFS =====================
@@ -3820,61 +3870,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $studentId) {
 
         const questionText = document.getElementById('question-text');
         const optionsContainer = document.getElementById('options-container');
-
-        // ===================== VISUAL SYNC FROM SAVED DATA =====================
-        if (savedGameData !== null) {
-            // 1. Update score display
-            if (scoreDisplay) scoreDisplay.innerText = gameState.score;
-
-            // 2. Update hero icon on the map button
-            const btnIcon = document.getElementById('btn-hero-icon');
-            if (btnIcon) btnIcon.src = gameState.selectedHero;
-
-            // 3. Unlock and badge map nodes based on completedRanks
-            for (let i = 0; i < 12; i++) {
-                const prevRank = i > 0 ? gameState.completedRanks[i - 1] : null;
-                const isUnlocked = i === 0 || prevRank === 'A' || prevRank === 'P';
-                const node = document.getElementById('mnode-' + i);
-                if (!node) continue;
-
-                if (isUnlocked) {
-                    node.classList.remove('locked');
-                    const lockIcon = node.querySelector('.adv-nlock');
-                    if (lockIcon) lockIcon.style.display = 'none';
-                    const numLabel = node.querySelector('.adv-nn');
-                    if (numLabel) numLabel.style.display = 'block';
-                }
-
-                // Add rank badge if level completed
-                const rank = gameState.completedRanks[i];
-                if (rank) {
-                    node.classList.add('completed');
-                    const old = node.querySelector('.adv-rank-badge');
-                    if (old) old.remove();
-                    const badge = document.createElement('div');
-                    badge.className = `adv-rank-badge rank-${rank.toLowerCase()}`;
-                    badge.textContent = rank;
-                    node.appendChild(badge);
-                }
-            }
-
-            // 4. Show Final Scorecard button if level 11 (4.3) is done
-            const scorecardBtn = document.getElementById('btn-final-scorecard');
-            if (scorecardBtn && gameState.completedRanks[11]) {
-                scorecardBtn.style.display = 'block';
-            }
-
-            console.log('UI synced from saved game data.');
-
-            // 5. Auto-resume: skip Start Adventure and go directly to map
-            switchScreen(mapScreen);
-            updateMap();
-            requestAnimationFrame(() => requestAnimationFrame(drawMapPath));
-
-            // Show Skip button on hero select (player can cancel without losing hero)
-            const skipBtn = document.getElementById('skip-hero-btn');
-            if (skipBtn) skipBtn.style.display = 'inline-block';
-        }
 
         // ===================== NAVIGATION =====================
         function switchScreen(screen) {
