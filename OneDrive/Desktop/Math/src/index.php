@@ -3761,6 +3761,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $studentId) {
             selectedHeroName: "Super Boy"
         };
 
+        // ===================== DOM REFS =====================
+        const startScreen = document.getElementById('start-screen');
+        const heroSelectScreen = document.getElementById('hero-select-screen');
+        const mapScreen = document.getElementById('map-screen');
+        const battleScreen = document.getElementById('battle-screen');
+        const resultScreen = document.getElementById('result-screen');
+
+        const playerHPBar = document.getElementById('player-hp-bar');
+        const monsterHPBar = document.getElementById('monster-hp-bar');
+        const playerHPText = document.getElementById('player-hp-text');
+        const monsterHPText = document.getElementById('monster-hp-text');
+
+        const scoreDisplay = document.getElementById('score-display');
+        const comboDisplay = document.getElementById('combo-display');
+
+        // ===================== AUDIO REFS =====================
+        const sfxCorrect = document.getElementById('sfx-correct');
+        const sfxWrong = document.getElementById('sfx-wrong');
+        const sfxHit = document.getElementById('sfx-hit');
+        const sfxShoot = document.getElementById('sfx-shoot');
+        const sfxWin = document.getElementById('sfx-win');
+        const sfxLose = document.getElementById('sfx-lose');
+
+        function playSound(sound) {
+            if (!sound) return;
+            sound.currentTime = 0;
+            sound.play().catch(e => console.log('Audio play failed:', e));
+        }
+
+        const heroArea = document.getElementById('hero-area');
+        const monsterArea = document.getElementById('monster-area');
+        const heroSprite = document.getElementById('hero-sprite');
+        const monsterSprite = document.getElementById('monster-sprite');
+        const monsterName = document.getElementById('hud-monster-name') || document.getElementById('monster-name');
+        const feedbackMsg = document.getElementById('feedback-message');
+
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+
+        // ===================== LOAD SAVED GAME DATA =====================
         // Parse the saved game data injected by PHP (No quotes, no parsing needed!)
         const savedGameData = <?php echo $gameData ? $gameData : 'null'; ?>;
 
@@ -3782,8 +3822,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $studentId) {
 
             // --- Visual Sync ---
             // 1. Score display
-            const sd = document.getElementById('score-display');
-            if (sd) sd.innerText = gameState.score;
+            if (scoreDisplay) scoreDisplay.innerText = gameState.score;
 
             // 2. Hero icon on map button
             const btnIcon = document.getElementById('btn-hero-icon');
@@ -3831,45 +3870,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $studentId) {
             const skipBtn = document.getElementById('skip-hero-btn');
             if (skipBtn) skipBtn.style.display = 'inline-block';
         }
-
-        // ===================== DOM REFS =====================
-        const startScreen = document.getElementById('start-screen');
-        const heroSelectScreen = document.getElementById('hero-select-screen');
-        const mapScreen = document.getElementById('map-screen');
-        const battleScreen = document.getElementById('battle-screen');
-        const resultScreen = document.getElementById('result-screen');
-
-        const playerHPBar = document.getElementById('player-hp-bar');
-        const monsterHPBar = document.getElementById('monster-hp-bar');
-        const playerHPText = document.getElementById('player-hp-text');
-        const monsterHPText = document.getElementById('monster-hp-text');
-
-        const scoreDisplay = document.getElementById('score-display');
-        const comboDisplay = document.getElementById('combo-display');
-
-        // ===================== AUDIO REFS =====================
-        const sfxCorrect = document.getElementById('sfx-correct');
-        const sfxWrong = document.getElementById('sfx-wrong');
-        const sfxHit = document.getElementById('sfx-hit');
-        const sfxShoot = document.getElementById('sfx-shoot');
-        const sfxWin = document.getElementById('sfx-win');
-        const sfxLose = document.getElementById('sfx-lose');
-
-        function playSound(sound) {
-            if (!sound) return;
-            sound.currentTime = 0;
-            sound.play().catch(e => console.log('Audio play failed:', e));
-        }
-
-        const heroArea = document.getElementById('hero-area');
-        const monsterArea = document.getElementById('monster-area');
-        const heroSprite = document.getElementById('hero-sprite');
-        const monsterSprite = document.getElementById('monster-sprite');
-        const monsterName = document.getElementById('hud-monster-name') || document.getElementById('monster-name');
-        const feedbackMsg = document.getElementById('feedback-message');
-
-        const questionText = document.getElementById('question-text');
-        const optionsContainer = document.getElementById('options-container');
 
         // ===================== NAVIGATION =====================
         function switchScreen(screen) {
