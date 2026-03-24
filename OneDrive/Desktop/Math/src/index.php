@@ -1,6 +1,4 @@
 <?php
-require '/var/www/llp/functions.php';
-require '/var/www/llp/Aws/config.php';
 
 
 // 1. Fetch the student ID from cookies
