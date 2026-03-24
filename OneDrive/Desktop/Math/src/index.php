@@ -140,7 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $studentId) {
 
     <!-- ===== Map Screen ===== -->
     <div id="map-screen" class="screen">
-        <button id="btn-final-scorecard" class="btn-primary cinematic-btn" style="position:absolute; bottom:40px; left:50%; transform:translateX(-50%); z-index:100; display:none; padding:15px 30px; font-size:1.2rem; box-shadow: 0 0 20px rgba(67, 233, 123, 0.6); animation: glow-pulse 2s infinite;">
+        <button id="btn-final-scorecard" class="cinematic-btn hover-scale" style="position:absolute; bottom:40px; left:50%; transform:translateX(-50%); z-index:100; display:none; padding:15px 35px; font-size:1.3rem; font-weight:bold; background: linear-gradient(135deg, #1a1a2e 0%, #0d1b2a 100%); color:#ffd200; border: 2px solid #ffd200; border-radius: 50px; box-shadow: 0 0 25px rgba(255, 210, 0, 0.5); cursor:pointer;">
             🏆 View Final Scorecard
         </button>
         <button id="btn-choose-hero" class="btn-map-action"
@@ -3932,19 +3932,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $studentId) {
             // Erase the dashed line precisely where the monsters and nodes are to create a depth effect underneath!
             ctx.globalCompositeOperation = 'destination-out';
             for (let i = 0; i < 12; i++) {
-                // 1. Erase precisely around the lock node
-                const mnode = document.getElementById(`mnode-${i}`);
-                if (mnode) {
-                    const rect = mnode.getBoundingClientRect();
-                    ctx.beginPath();
-                    ctx.arc(
-                        rect.left - canvasRect.left + rect.width / 2,
-                        rect.top - canvasRect.top + rect.height / 2,
-                        55, // 55px radius provides a clean spacing around the 90x90 node
-                        0, Math.PI * 2
-                    );
-                    ctx.fill();
-                }
+                // 1. Erase around the node removed so lines connect completely under the node
 
                 // 2. Erase precisely around the monster image so line goes behind it
                 const nw = document.getElementById(`mnw-${i}`);
