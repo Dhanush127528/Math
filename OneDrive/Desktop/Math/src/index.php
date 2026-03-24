@@ -3765,9 +3765,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $studentId) {
         const savedGameDataRaw = <?php echo $gameData ? json_encode($gameData) : 'null'; ?>;
         let savedGameData = null;
 
-        if (savedGameDataRaw !== "null") {
+        if (savedGameDataRaw !== null && typeof savedGameDataRaw === 'object') {
             try {
-                savedGameData = (typeof savedGameDataRaw === 'string') ? JSON.parse(savedGameDataRaw) : savedGameDataRaw;
+                savedGameData = savedGameDataRaw; // Already a JS object from json_encode
                 console.log("Loaded previous save data:", savedGameData);
 
                 // Overwrite game variables with saved data
