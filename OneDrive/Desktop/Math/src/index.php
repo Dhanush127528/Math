@@ -2970,7 +2970,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $studentId) {
         };
 
         const level2_1 = {
-            name: "Division of Fractions",
+            name: "2.1 Division of Fractions",
             background: "bg-forest",
             monsterName: "Fraction Phantom",
             monsterSprite: "https://raw.githubusercontent.com/Dhanush127528/images/main/monster4.png", // Will be swapped out if provided
