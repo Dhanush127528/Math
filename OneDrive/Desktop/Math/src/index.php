@@ -4673,7 +4673,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $studentId) {
 
                 // Final level handling
                 if (gameState.currentLevelIndex === levels.length - 1) {
-                    document.getElementById('next-level-btn').textContent = 'Play Again 🔄';
+                    document.getElementById('next-level-btn').textContent = 'View Map 🗺️';
                     document.getElementById('restart-btn').style.display = 'none'; // Hide duplicate retry
                     document.getElementById('result-title').textContent = 'Adventure Complete! 🎉';
                     document.getElementById('result-message').textContent = 'You saved the Math Kingdom!';
