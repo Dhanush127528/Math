@@ -1,6 +1,7 @@
 <?php
-require 'functions.php';
-require 'Aws/config.php';
+require '/var/www/llp/functions.php';
+require '/var/www/llp/Aws/config.php';
+
 
 // 1. Fetch the student ID from cookies
 $studentId = isset($_COOKIE['CurStudentID']) ? $_COOKIE['CurStudentID'] : null;
@@ -3861,12 +3862,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $studentId) {
                 scorecardBtn.style.display = 'block';
             }
 
-            // 5. Auto-resume to map (skip Start Adventure)
-            switchScreen(mapScreen);
-            updateMap();
-            requestAnimationFrame(() => requestAnimationFrame(drawMapPath));
-
-            // 6. Show Skip button on hero select
+            // 5. Show Skip button on Hero Select — lets player skip to map with loaded progress
             const skipBtn = document.getElementById('skip-hero-btn');
             if (skipBtn) skipBtn.style.display = 'inline-block';
         }
