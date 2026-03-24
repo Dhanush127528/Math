@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $studentId) {
         <h2 class="text-shadow" style="margin-top:2rem;">Choose Your Hero 🛡️</h2>
         <div class="hero-roster">
             <!-- Hero Option 1 -->
-            <div class="hero-option selected"
+            <div class="hero-option"
                 data-hero="https://raw.githubusercontent.com/Dhanush127528/images/main/hero1.png" data-name="Super Boy">
                 <img src="https://raw.githubusercontent.com/Dhanush127528/images/main/hero1.png" alt="Super Boy">
                 <h3 class="hero-option-name">Super Boy</h3>
