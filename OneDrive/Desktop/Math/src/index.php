@@ -124,8 +124,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $studentId) {
                 <p id="hero-req-4" style="color:#ff9a9e">Clear Level 3.3</p>
             </div>
         </div>
-        <button id="confirm-hero-btn" class="btn-result btn-next cinematic-btn" style="margin-top:2rem;">Confirm Hero
-            ➡️</button>
+        <div style="display:flex; gap:1rem; margin-top:2rem; justify-content:center;">
+            <button id="confirm-hero-btn" class="btn-result btn-next cinematic-btn">Confirm Hero ➡️</button>
+            <button id="skip-hero-btn" class="btn-result btn-restart cinematic-btn" style="display:none;">Skip ⏭️</button>
+        </div>
     </div>
 
     <!-- ===== Final Score Screen ===== -->
@@ -3863,6 +3865,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $studentId) {
             }
 
             console.log('UI synced from saved game data.');
+
+            // 5. Auto-resume: skip Start Adventure and go directly to map
+            switchScreen(mapScreen);
+            updateMap();
+            requestAnimationFrame(() => requestAnimationFrame(drawMapPath));
+
+            // Show Skip button on hero select (player can cancel without losing hero)
+            const skipBtn = document.getElementById('skip-hero-btn');
+            if (skipBtn) skipBtn.style.display = 'inline-block';
         }
 
         // ===================== NAVIGATION =====================
@@ -4109,6 +4120,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $studentId) {
             updateMap();
             requestAnimationFrame(() => requestAnimationFrame(drawMapPath));
         });
+
+        // 3b. Skip Hero — go back to map without changing hero
+        const skipHeroBtn = document.getElementById('skip-hero-btn');
+        if (skipHeroBtn) {
+            skipHeroBtn.addEventListener('click', () => {
+                switchScreen(mapScreen);
+                updateMap();
+                requestAnimationFrame(() => requestAnimationFrame(drawMapPath));
+            });
+        }
 
         document.querySelectorAll('.adv-node').forEach(node => {
             node.addEventListener('click', () => {
