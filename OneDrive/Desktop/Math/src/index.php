@@ -4666,15 +4666,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $studentId) {
                 document.getElementById('result-message').textContent = 'You defeated the monster!';
                 document.getElementById('next-level-btn').style.display = 'inline-block';
 
-                // Final level handling
-                if (gameState.currentLevelIndex === levels.length - 1) {
+                // Final level handling (11 is 'level4_3', the final boss on the 12-node map)
+                if (gameState.currentLevelIndex === 11) {
                     document.getElementById('next-level-btn').textContent = 'View Map 🗺️';
                     document.getElementById('restart-btn').style.display = 'none'; // Hide duplicate retry
-                    document.getElementById('result-title').textContent = 'Adventure Complete! 🎉';
+                    
+                    const titleObj = document.getElementById('result-title');
+                    titleObj.textContent = 'Adventure Complete! 🎉';
+                    titleObj.style.color = '#ffd200'; // Gold text
+                    titleObj.style.textShadow = '0 0 30px rgba(255, 210, 0, 1)';
+                    titleObj.style.fontSize = 'clamp(2.5rem, 6vw, 4rem)';
+                    
                     document.getElementById('result-message').textContent = 'You saved the Math Kingdom!';
                 } else {
                     document.getElementById('next-level-btn').textContent = 'Next Level ➡️';
                     document.getElementById('restart-btn').style.display = 'inline-block';
+                    
+                    // Reset styling for earlier levels
+                    const titleObj = document.getElementById('result-title');
+                    titleObj.style.color = '#fff';
+                    titleObj.style.textShadow = '0 0 30px rgba(79, 172, 254, 0.8)';
+                    titleObj.style.fontSize = 'clamp(2rem, 5vw, 3rem)';
                 }
             } else {
                 document.getElementById('final-rank').textContent = `❌ Failed (Rank: ${rankData.title})`;
