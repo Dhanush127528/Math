@@ -4654,17 +4654,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $studentId) {
             document.getElementById('final-score').textContent = gameState.score;
             document.getElementById('final-accuracy').textContent = `${accuracy}%`;
 
-            // Always store the letter rank for the map even on defeat
+            // Store/Overwrite the letter rank for the latest victory
             const currentRankLetter = rankData.letter;
-            const existingRank = gameState.completedRanks[gameState.currentLevelIndex];
-
-            // Rank upgrade logic (A > P > PP)
-            const rankOrder = { 'A': 3, 'P': 2, 'PP': 1 };
-            if (!existingRank || rankOrder[currentRankLetter] > rankOrder[existingRank]) {
-                gameState.completedRanks[gameState.currentLevelIndex] = currentRankLetter;
-            }
 
             if (victory) {
+                gameState.completedRanks[gameState.currentLevelIndex] = currentRankLetter;
+
                 document.getElementById('final-rank').textContent = rankData.title;
 
                 document.getElementById('result-title').textContent = 'Level Complete! 🏆';
