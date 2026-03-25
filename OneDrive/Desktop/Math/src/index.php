@@ -525,9 +525,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $studentId) {
 
         #start-screen h1 {
             color: #fff;
+            font-family: 'Roboto', sans-serif;
             font-size: clamp(2rem, 5vw, 3.5rem);
-            text-shadow: 0 0 30px rgba(79, 172, 254, 0.8), 0 0 60px rgba(79, 172, 254, 0.4);
-            animation: glow-pulse 3s ease-in-out infinite;
         }
 
         #start-screen p {
@@ -537,23 +536,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $studentId) {
         }
 
         #start-btn {
-            background: linear-gradient(135deg, #43e97b, #38f9d7);
+            background: linear-gradient(135deg, #5abd7bff, #38f9d7);
             border: none;
             color: #fff;
-            font-family: 'Fredoka', sans-serif;
+            font-family: 'Roboto', sans-serif;
             font-size: 1.4rem;
             font-weight: 600;
             padding: 1rem 3rem;
             border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 10px 30px rgba(67, 233, 123, 0.4);
-            transition: transform 0.2s, box-shadow 0.2s;
-            animation: float 3s ease-in-out infinite;
+            transition: transform 0.2s;
         }
 
         #start-btn:hover {
-            transform: scale(1.08) translateY(-4px);
-            box-shadow: 0 20px 40px rgba(67, 233, 123, 0.6);
+            transform: scale(1.05);
         }
 
         @keyframes glow-pulse {
